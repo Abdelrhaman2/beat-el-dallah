@@ -66,16 +66,6 @@ cp .env.example .env.local
 ```
 
 Example `.env.local`:
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://oymfimtltmuyuwdmditq.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-NEXT_PUBLIC_DEFAULT_WHATSAPP=201012345678
-NEXT_PUBLIC_DEFAULT_DEPOSIT_PERCENT=25
-ADMIN_SECRET_PASSCODE=dallah2026admin
-```
-
 ### 4. Database Setup & Migrations
 The initial migration is located in `supabase/migrations/001_initial_schema.sql`. You can execute it directly in the Supabase SQL Editor or run:
 ```bash
