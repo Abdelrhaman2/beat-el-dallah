@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ==========================================================================
+     Beit El Dallah - Centralized Brand Tokens (Amendment #5)
+     Modify these values here to adjust the entire application palette instantly.
+     ========================================================================== */
+  --brand-espresso: #271810;
+  --brand-dark: #190F0A;
+  --brand-caramel: #D97706;
+  --brand-gold: #F59E0B;
+  --brand-cream: #FAF6F0;
+  --brand-surface: #FFFFFF;
+  --brand-text: #451A03;
+  --brand-muted: #785A48;
+  --brand-border: #E8DFD5;
+
+  --font-cairo: 'Cairo', sans-serif;
+  --font-outfit: 'Outfit', sans-serif;
+}
+
+/* Base resets & typography */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--brand-cream);
+  color: var(--brand-text);
+  font-family: var(--font-cairo), var(--font-outfit), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Bi-directional typography tweaks */
+[dir="rtl"] body {
+  font-family: var(--font-cairo), sans-serif;
+}
+
+[dir="ltr"] body {
+  font-family: var(--font-outfit), var(--font-cairo), sans-serif;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF6F0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D97706;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B45309;
+}
+
+/* Glassmorphism helpers */
+.glass-nav {
+  background: rgba(250, 246, 240, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}

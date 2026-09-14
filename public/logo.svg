@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" fill="none">
+  <!-- Circular Dallah Emblem -->
+  <g transform="translate(10, 10)">
+    <!-- Outer Glow & Gold Ring -->
+    <circle cx="50" cy="50" r="48" fill="#271810" stroke="#D97706" stroke-width="3"/>
+    <circle cx="50" cy="50" r="42" fill="none" stroke="#F59E0B" stroke-width="1" stroke-dasharray="3 3"/>
+    
+    <!-- Traditional Arabic Dallah Silhouette -->
+    <!-- Dallah Base -->
+    <path d="M 36 78 C 36 78 40 82 50 82 C 60 82 64 78 64 78 L 68 70 C 68 70 60 68 60 62 C 60 56 64 48 58 38 L 42 38 C 36 48 40 56 40 62 C 40 68 32 70 32 70 Z" fill="#F59E0B"/>
+    <!-- Dallah Spout -->
+    <path d="M 58 48 C 66 42 74 34 76 26 C 76 26 73 34 60 42 Z" fill="#D97706"/>
+    <!-- Dallah Lid & Finial -->
+    <path d="M 44 38 C 44 38 46 32 50 24 C 54 32 56 38 56 38 Z" fill="#F59E0B"/>
+    <circle cx="50" cy="22" r="2.5" fill="#FEF3C7"/>
+    <!-- Dallah Handle -->
+    <path d="M 38 42 C 26 44 24 58 34 66" fill="none" stroke="#D97706" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- Steam / Aroma Swirl -->
+    <path d="M 68 22 C 72 16 70 12 74 8" fill="none" stroke="#FEF3C7" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+  </g>
+
+  <!-- Typography -->
+  <!-- Arabic Brand Name -->
+  <text x="125" y="58" font-family="'Cairo', sans-serif" font-size="34" font-weight="900" fill="#271810" letter-spacing="0.5">بـيـت الـدَّلّـة</text>
+  <!-- English Subtitle & Identity -->
+  <text x="127" y="85" font-family="'Outfit', sans-serif" font-size="14" font-weight="600" fill="#D97706" letter-spacing="3">BEIT EL DALLAH</text>
+  <text x="128" y="102" font-family="'Outfit', sans-serif" font-size="9" font-weight="400" fill="#785A48" letter-spacing="1.5">SPECIALTY COFFEE &amp; CAFE SUPPLIES</text>
+</svg>
