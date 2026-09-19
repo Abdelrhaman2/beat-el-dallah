@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { adminSelect, adminUpdate } from "@/lib/admin-api";
 import { formatPrice } from "@/lib/utils";
 import { Order, OrderStatus } from "@/types";
 import {
@@ -35,33 +35,33 @@ export default function AdminOrdersPage() {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      let query = supabase
-        .from("orders")
-        .select("*, items:order_items(*)", { count: "exact" });
-
-      // Apply server-side status filter
-      if (statusFilter !== "all") {
-        query = query.eq("status", statusFilter);
-      }
-
-      // Apply search query (phone or order ref)
-      if (searchQuery.trim()) {
-        query = query.or(
-          `order_ref.ilike.%${searchQuery.trim()}%,customer_phone.ilike.%${searchQuery.trim()}%,customer_name.ilike.%${searchQuery.trim()}%`
-        );
-      }
-
-      // Pagination
       const from = (currentPage - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
 
-      query = query.order("created_at", { ascending: false }).range(from, to);
+      const params: any = {
+        table: "orders",
+        select: "*, items:order_items(*)",
+        orderBy: "created_at",
+        orderAsc: false,
+        rangeFrom: from,
+        rangeTo: to,
+        count: "exact" as const,
+      };
 
-      const { data, count, error } = await query;
+      if (statusFilter !== "all") {
+        params.filterCol = "status";
+        params.filterVal = statusFilter;
+      }
 
-      if (data) {
-        setOrders(data);
-        setTotalCount(count || data.length);
+      if (searchQuery.trim()) {
+        params.or = `order_ref.ilike.%${searchQuery.trim()}%,customer_phone.ilike.%${searchQuery.trim()}%,customer_name.ilike.%${searchQuery.trim()}%`;
+      }
+
+      const res = await adminSelect(params);
+
+      if (res.data) {
+        setOrders(res.data);
+        setTotalCount(res.count || res.data.length);
       }
     } catch {
       // Continue
@@ -77,18 +77,17 @@ export default function AdminOrdersPage() {
   const handleUpdateStatus = async (orderId: string, newStatus: OrderStatus) => {
     setStatusUpdating(orderId);
     try {
-      const { error } = await supabase
-        .from("orders")
-        .update({ status: newStatus, updated_at: new Date().toISOString() })
-        .eq("id", orderId);
+      await adminUpdate({
+        table: "orders",
+        data: { status: newStatus, updated_at: new Date().toISOString() },
+        match: { id: orderId },
+      });
 
-      if (!error) {
-        setOrders((prev) =>
-          prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
-        );
-        if (selectedOrder && selectedOrder.id === orderId) {
-          setSelectedOrder({ ...selectedOrder, status: newStatus });
-        }
+      setOrders((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
+      );
+      if (selectedOrder && selectedOrder.id === orderId) {
+        setSelectedOrder({ ...selectedOrder, status: newStatus });
       }
     } catch (err: any) {
       alert("حدث خطأ أثناء تعديل الحالة: " + err.message);

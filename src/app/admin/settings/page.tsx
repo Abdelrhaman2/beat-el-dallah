@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { adminSelect, adminUpdate } from "@/lib/admin-api";
 import { MOCK_SITE_SETTINGS } from "@/lib/supabase/mock-data";
 import { SiteSettings } from "@/types";
 import { Settings, Save, Check, Phone, ShieldCheck, Percent } from "lucide-react";
@@ -16,8 +16,8 @@ export default function AdminSettingsPage() {
   useEffect(() => {
     async function loadSettings() {
       try {
-        const { data } = await supabase.from("site_settings").select("*").eq("id", 1).single();
-        if (data) setSettings(data);
+        const res = await adminSelect({ table: "site_settings", select: "*", filterCol: "id", filterVal: "1", single: true });
+        if (res.data) setSettings(res.data);
       } catch {
         // Fallback
       } finally {
@@ -33,9 +33,9 @@ export default function AdminSettingsPage() {
     setSavedSuccess(false);
 
     try {
-      const { error } = await supabase
-        .from("site_settings")
-        .update({
+      await adminUpdate({
+        table: "site_settings",
+        data: {
           deposit_percentage: Number(settings.deposit_percentage),
           whatsapp_number: settings.whatsapp_number.trim(),
           store_name_ar: settings.store_name_ar,
@@ -44,10 +44,10 @@ export default function AdminSettingsPage() {
           payment_instructions_ar: settings.payment_instructions_ar,
           payment_instructions_en: settings.payment_instructions_en,
           updated_at: new Date().toISOString(),
-        })
-        .eq("id", 1);
+        },
+        match: { id: "1" },
+      });
 
-      if (error) throw error;
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
     } catch (err: any) {

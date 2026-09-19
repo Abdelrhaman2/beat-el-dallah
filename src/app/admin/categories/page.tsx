@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { supabase } from "@/lib/supabase/client";
+import { adminSelect, adminInsert, adminUpdate } from "@/lib/admin-api";
 import { Category } from "@/types";
 import { FolderTree, Plus, Edit2, CheckCircle, XCircle, X } from "lucide-react";
 import { ImageUpload } from "@/components/admin/ImageUpload";
@@ -24,8 +24,8 @@ export default function AdminCategoriesPage() {
   async function loadCategories() {
     setLoading(true);
     try {
-      const { data } = await supabase.from("categories").select("*").order("sort_order", { ascending: true });
-      if (data) setCategories(data);
+      const res = await adminSelect({ table: "categories", select: "*", orderBy: "sort_order", orderAsc: true });
+      if (res.data) setCategories(res.data);
     } catch {
       // Continue
     } finally {
@@ -65,26 +65,30 @@ export default function AdminCategoriesPage() {
 
     try {
       if (isNew) {
-        await supabase.from("categories").insert({
-          name_ar: nameAr,
-          name_en: nameEn,
-          slug: slug || nameEn.toLowerCase().replace(/\s+/g, "-"),
-          image_url: imageUrl,
-          sort_order: sortOrder,
-          is_active: isActive,
+        await adminInsert({
+          table: "categories",
+          data: {
+            name_ar: nameAr,
+            name_en: nameEn,
+            slug: slug || nameEn.toLowerCase().replace(/\s+/g, "-"),
+            image_url: imageUrl,
+            sort_order: sortOrder,
+            is_active: isActive,
+          },
         });
       } else if (editingCategory?.id) {
-        await supabase
-          .from("categories")
-          .update({
+        await adminUpdate({
+          table: "categories",
+          data: {
             name_ar: nameAr,
             name_en: nameEn,
             slug,
             image_url: imageUrl,
             sort_order: sortOrder,
             is_active: isActive,
-          })
-          .eq("id", editingCategory.id);
+          },
+          match: { id: editingCategory.id },
+        });
       }
       setEditingCategory(null);
       await loadCategories();

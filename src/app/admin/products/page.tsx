@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { supabase } from "@/lib/supabase/client";
+import { adminSelect, adminInsert, adminUpdate } from "@/lib/admin-api";
 import { formatPrice } from "@/lib/utils";
 import { Product, Category, ProductVariant } from "@/types";
 import {
@@ -41,14 +41,16 @@ export default function AdminProductsPage() {
   async function loadData() {
     setLoading(true);
     try {
-      const { data: catData } = await supabase.from("categories").select("*").order("sort_order");
-      if (catData) setCategories(catData);
+      const catRes = await adminSelect({ table: "categories", select: "*", orderBy: "sort_order", orderAsc: true });
+      if (catRes.data) setCategories(catRes.data);
 
-      const { data: prodData } = await supabase
-        .from("products")
-        .select("*, category:categories(*), variants:product_variants(*)")
-        .order("sort_order", { ascending: true });
-      if (prodData) setProducts(prodData);
+      const prodRes = await adminSelect({
+        table: "products",
+        select: "*, category:categories(*), variants:product_variants(*)",
+        orderBy: "sort_order",
+        orderAsc: true,
+      });
+      if (prodRes.data) setProducts(prodRes.data);
     } catch {
       // Continue
     } finally {
@@ -92,7 +94,11 @@ export default function AdminProductsPage() {
 
   const handleToggleActive = async (productId: string, current: boolean) => {
     try {
-      await supabase.from("products").update({ is_active: !current }).eq("id", productId);
+      await adminUpdate({
+        table: "products",
+        data: { is_active: !current },
+        match: { id: productId },
+      });
       setProducts((prev) =>
         prev.map((p) => (p.id === productId ? { ...p, is_active: !current } : p))
       );
@@ -107,9 +113,9 @@ export default function AdminProductsPage() {
 
     try {
       if (isNew) {
-        const { data, error } = await supabase
-          .from("products")
-          .insert({
+        await adminInsert({
+          table: "products",
+          data: {
             name_ar: nameAr,
             name_en: nameEn,
             slug: slug || nameEn.toLowerCase().replace(/\s+/g, "-"),
@@ -120,15 +126,13 @@ export default function AdminProductsPage() {
             image_url_1: img1,
             image_url_2: img2 || null,
             is_active: isActive,
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
+          },
+          returnData: true,
+        });
       } else if (editingProduct?.id) {
-        const { error } = await supabase
-          .from("products")
-          .update({
+        await adminUpdate({
+          table: "products",
+          data: {
             name_ar: nameAr,
             name_en: nameEn,
             slug,
@@ -140,10 +144,9 @@ export default function AdminProductsPage() {
             image_url_2: img2 || null,
             is_active: isActive,
             updated_at: new Date().toISOString(),
-          })
-          .eq("id", editingProduct.id);
-
-        if (error) throw error;
+          },
+          match: { id: editingProduct.id },
+        });
       }
 
       setEditingProduct(null);

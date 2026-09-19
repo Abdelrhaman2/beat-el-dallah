@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { adminSelect } from "@/lib/admin-api";
 import { formatPrice } from "@/lib/utils";
 import { Order } from "@/types";
 import { BarChart3, Download, TrendingUp, ShoppingBag, MapPin, Calendar } from "lucide-react";
@@ -13,8 +13,8 @@ export default function AdminReportsPage() {
   useEffect(() => {
     async function loadReportsData() {
       try {
-        const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
-        if (data) setOrders(data);
+        const res = await adminSelect({ table: "orders", select: "*", orderBy: "created_at", orderAsc: false });
+        if (res.data) setOrders(res.data);
       } catch {
         // Fallback
       } finally {

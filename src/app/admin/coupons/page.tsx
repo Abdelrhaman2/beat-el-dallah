@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { adminSelect, adminInsert, adminUpdate } from "@/lib/admin-api";
 import { Coupon } from "@/types";
 import { Tag, Plus, Trash2, CheckCircle, XCircle, X } from "lucide-react";
 
@@ -17,8 +17,8 @@ export default function AdminCouponsPage() {
   async function loadCoupons() {
     setLoading(true);
     try {
-      const { data } = await supabase.from("coupons").select("*").order("created_at", { ascending: false });
-      if (data) setCoupons(data);
+      const res = await adminSelect({ table: "coupons", select: "*", orderBy: "created_at", orderAsc: false });
+      if (res.data) setCoupons(res.data);
     } catch {
       // Continue
     } finally {
@@ -33,12 +33,15 @@ export default function AdminCouponsPage() {
   const handleCreateCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await supabase.from("coupons").insert({
-        code: code.trim().toUpperCase(),
-        discount_type: type,
-        discount_value: Number(value),
-        usage_limit: limit,
-        is_active: true,
+      await adminInsert({
+        table: "coupons",
+        data: {
+          code: code.trim().toUpperCase(),
+          discount_type: type,
+          discount_value: Number(value),
+          usage_limit: limit,
+          is_active: true,
+        },
       });
       setShowNewModal(false);
       setCode("");
@@ -50,7 +53,11 @@ export default function AdminCouponsPage() {
 
   const handleToggleActive = async (id: string, current: boolean) => {
     try {
-      await supabase.from("coupons").update({ is_active: !current }).eq("id", id);
+      await adminUpdate({
+        table: "coupons",
+        data: { is_active: !current },
+        match: { id },
+      });
       setCoupons((prev) => prev.map((c) => (c.id === id ? { ...c, is_active: !current } : c)));
     } catch (err: any) {
       alert("Error: " + err.message);
